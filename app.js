@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
-const { NOT_FOUND } = require('./utils/errors');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -17,13 +16,12 @@ app.use((req, res, next) => {
   req.user = {
     _id: '62ab71e60f2955d595d9933e',
   };
-
   next();
 });
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
-app.use((req, res) => res.status(NOT_FOUND).send({ message: 'Ресурс не найден.' }));
+app.use('*', (req, res) => res.status(404).send({ message: 'Ресурс не найден.' }));
 
 app.listen(PORT, () => {
   // Если работает
