@@ -50,7 +50,7 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'validationError') {
+      if (err.name === 'ValidationError') {
         return res
           .status(BAD_REQUEST)
           .send({
@@ -82,7 +82,7 @@ module.exports.editUserInfo = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'validationError') {
+      if (err.name === 'ValidationError') {
         return res
           .status(BAD_REQUEST)
           .send({
@@ -114,7 +114,7 @@ module.exports.editUserAvatar = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'validationError') {
+      if (err.name === 'ValidationError') {
         return res
           .status(BAD_REQUEST)
           .send({
