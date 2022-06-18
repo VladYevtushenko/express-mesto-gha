@@ -46,11 +46,11 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res
+        return res
           .status(NOT_FOUND)
           .send({ message: 'Карточка с указанным _id не найдена.' });
       }
-      res.send({ message: 'Карточка удалена' });
+      return res.send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -75,11 +75,11 @@ module.exports.likeCard = (req, res) => {
     .populate('owner')
     .then((card) => {
       if (!card) {
-        res
+        return res
           .status(NOT_FOUND)
           .send({ message: 'Передан несуществующий _id карточки.' });
       }
-      res.send(card);
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -104,11 +104,11 @@ module.exports.dislikeCard = (req, res) => {
     .populate('owner')
     .then((card) => {
       if (!card) {
-        res
+        return res
           .status(NOT_FOUND)
           .send({ message: 'Передан несуществующий _id карточки.' });
       }
-      res.send(card);
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {

@@ -24,11 +24,11 @@ module.exports.getUserId = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        res
+        return res
           .status(NOT_FOUND)
           .send({ message: 'Пользователь по указанному _id не найден.' });
       }
-      res.send(user);
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -75,11 +75,11 @@ module.exports.editUserInfo = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        res
+        return res
           .status(NOT_FOUND)
           .send({ message: 'Пользователь по указанному _id не найден.' });
       }
-      res.send(user);
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -107,11 +107,11 @@ module.exports.editUserAvatar = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        res
+        return res
           .status(NOT_FOUND)
           .send({ message: 'Пользователь по указанному _id не найден.' });
       }
-      res.send(user);
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
