@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const {
@@ -9,6 +9,29 @@ const {
 } = require('../utils/errors');
 
 const { inputsError } = require('../utils/inputsError');
+
+// login
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        'some-secret-key',
+        { expiresIn: '7d' },
+      );
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      });
+      res
+        .status(200)
+        .send({ message: 'Вы вошли' });
+    })
+    .catch(() => next(new Error('Указаны неправильные почта или пароль')));
+};
 
 // GET lookup all users
 
