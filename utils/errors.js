@@ -2,7 +2,7 @@ const INTERNAL_SERVER_ERROR = 500;
 const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 const UNAUTHORIZED_ERROR = 401;
-const FORBIDEN = 403;
+const FORBIDDEN = 403;
 const CONFLICT = 409;
 
 module.exports = {
@@ -10,6 +10,6 @@ module.exports = {
   BAD_REQUEST,
   NOT_FOUND,
   UNAUTHORIZED_ERROR,
-  FORBIDEN,
+  FORBIDDEN,
   CONFLICT,
 };
