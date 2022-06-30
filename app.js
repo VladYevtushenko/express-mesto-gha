@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 
@@ -31,6 +32,8 @@ app.post('/signup', celebrate({
     avatar: Joi.string(),
   }),
 }), createUser);
+
+app.use(auth);
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
