@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const {
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
@@ -15,11 +17,11 @@ const { inputsError } = require('../utils/inputsError');
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'some-secret-key',
+        NODE_ENV === 'production' ? JWT_SECRET : 'secret-key',
         { expiresIn: '7d' },
       );
       res.cookie('jwt', token, {
@@ -33,6 +35,20 @@ module.exports.login = (req, res, next) => {
     .catch(() => next(new Error('Указаны неправильные почта или пароль')));
 };
 
+// GET lookup user
+
+module.exports.getUser = (req, res, next) => User
+  .findById(req.user._id)
+  .then((user) => {
+    if (!user) {
+      throw new Error('Пользователь с таким id не найден');
+    }
+    res
+      .status(200)
+      .send(user);
+  })
+  .catch(next);
+
 // GET lookup all users
 
 module.exports.getUsers = (req, res) => {
@@ -43,7 +59,7 @@ module.exports.getUsers = (req, res) => {
       .send({ message: `${INTERNAL_SERVER_ERROR}: Ошибка сервера` }));
 };
 
-// GET search user by ID
+// GET lookup user by ID
 
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.userId)
