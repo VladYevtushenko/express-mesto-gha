@@ -2,13 +2,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+const BadRequestError = ('../errors/badRequestError.js');
+const ConflictError = ('../errors/conflictError.js');
+const NotFoundError = ('../errors/notFoundError.js');
+const UnauthorisedError = ('../errors/unauthorisedError.js');
+
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-const {
-  INTERNAL_SERVER_ERROR,
-  NOT_FOUND,
-  BAD_REQUEST,
-} = require('../utils/errors');
+const { INTERNAL_SERVER_ERROR } = require('../utils/errors');
 
 const { inputsError } = require('../utils/inputsError');
 
@@ -32,7 +33,7 @@ module.exports.login = (req, res, next) => {
         .status(200)
         .send({ message: 'Вы вошли' });
     })
-    .catch(() => next(new Error('Указаны неправильные почта или пароль')));
+    .catch(() => next(new UnauthorisedError('Указаны неправильные почта или пароль')));
 };
 
 // GET lookup user
@@ -41,7 +42,7 @@ module.exports.getUser = (req, res, next) => User
   .findById(req.user._id)
   .then((user) => {
     if (!user) {
-      throw new Error('Пользователь с таким id не найден');
+      throw new NotFoundError('Пользователь с таким id не найден');
     }
     res
       .status(200)
@@ -61,31 +62,24 @@ module.exports.getUsers = (req, res) => {
 
 // GET lookup user by ID
 
-module.exports.getUserId = (req, res) => {
+module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: 'Пользователь по указанному _id не найден.' });
+        throw new NotFoundError('Пользователь по указанному _id не найден');
       }
-      return res.send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: 'Отправлен неврный _id пользователя' });
-      }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `${INTERNAL_SERVER_ERROR}: Ошибка сервера` });
+        next(new BadRequestError('Отправлен неврный _id пользователя'));
+      } next(err);
     });
 };
 
 // POST create user
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -100,21 +94,17 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res
-          .status(BAD_REQUEST)
-          .send({
-            message: `Переданы некорректные данные при создании пользователя, неверно указаны данные в полях: ${inputsError(err)}`,
-          });
+        next(new BadRequestError(`Переданы некорректные данные при создании пользователя, неверно указаны данные в полях: ${inputsError(err)}`));
+      } else if (err.code === 11000) {
+        next(new ConflictError('Пользователь с указанным email уже зарегистрован'));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `${INTERNAL_SERVER_ERROR}: Ошибка сервера` });
+      next(err);
     });
 };
 
 // PATCH user info editing
 
-module.exports.editUserInfo = (req, res) => {
+module.exports.editUserInfo = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
@@ -124,29 +114,21 @@ module.exports.editUserInfo = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: 'Пользователь по указанному _id не найден.' });
+        throw new NotFoundError('Пользователь по указанному id не найден');
       }
-      return res.send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res
-          .status(BAD_REQUEST)
-          .send({
-            message: `Переданы некорректные данные при изменении данных пользователя, неверно указаны данные в полях: ${inputsError(err)}`,
-          });
+        next(new BadRequestError(`Переданы некорректные данные при изменении данных пользователя, неверно указаны данные в полях: ${inputsError(err)}`));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `${INTERNAL_SERVER_ERROR}: Ошибка сервера` });
+      next(err);
     });
 };
 
 // PATCH user's ava editing
 
-module.exports.editUserAvatar = (req, res) => {
+module.exports.editUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
@@ -156,22 +138,14 @@ module.exports.editUserAvatar = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: 'Пользователь по указанному _id не найден.' });
+        throw new NotFoundError('Пользователь по указанному _id не найден');
       }
-      return res.send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res
-          .status(BAD_REQUEST)
-          .send({
-            message: `Переданы некорректные данные при изменении данных пользователя, неверно указаны данные в полях: ${inputsError(err)}`,
-          });
+        next(new BadRequestError(`Переданы некорректные данные при изменении данных пользователя, неверно указаны данные в полях: ${inputsError(err)}`));
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `${INTERNAL_SERVER_ERROR}: Ошибка сервера` });
+      next(err);
     });
 };
