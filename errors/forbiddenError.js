@@ -4,7 +4,7 @@ class ForbiddenError extends Error {
   constructor(message) {
     super();
     this.message = message;
-    this.codeStatus = FORBIDDEN;
+    this.statusCode = FORBIDDEN;
   }
 }
 
