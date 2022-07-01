@@ -9,8 +9,6 @@ const UnauthorisedError = ('../errors/unauthorisedError.js');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-// const { INTERNAL_SERVER_ERROR } = require('../utils/errors');
-
 const { inputsError } = require('../utils/inputsError');
 
 // login
@@ -54,7 +52,7 @@ module.exports.getUser = (req, res, next) => User
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send(users))
+    .then((result) => res.send(result))
     .catch(next);
 };
 
