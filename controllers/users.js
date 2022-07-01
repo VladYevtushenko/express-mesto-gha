@@ -52,12 +52,10 @@ module.exports.getUser = (req, res, next) => User
 
 // GET lookup all users
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res
-      .status(INTERNAL_SERVER_ERROR)
-      .send({ message: `${INTERNAL_SERVER_ERROR}: Ошибка сервера` }));
+    .catch(next);
 };
 
 // GET lookup user by ID
@@ -73,7 +71,8 @@ module.exports.getUserId = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Отправлен неврный _id пользователя'));
-      } next(err);
+      }
+      next(err);
     });
 };
 
