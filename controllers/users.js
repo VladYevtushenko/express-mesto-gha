@@ -9,7 +9,7 @@ const UnauthorisedError = ('../errors/unauthorisedError.js');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-const { INTERNAL_SERVER_ERROR } = require('../utils/errors');
+// const { INTERNAL_SERVER_ERROR } = require('../utils/errors');
 
 const { inputsError } = require('../utils/inputsError');
 
