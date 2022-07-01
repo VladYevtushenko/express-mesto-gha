@@ -6,6 +6,9 @@ const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
+const { urlValidation } = require('./utils/urlValidation');
+const NotFoundError = require('./errors/notFoundError');
+const handleErrors = require('./middlewares/handleErrors');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -29,7 +32,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().custom(urlValidation),
   }),
 }), createUser);
 
@@ -39,7 +42,11 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 app.use(errors());
-app.use('*', (req, res) => res.status(404).send({ message: 'Ресурс не найден' }));
+app.use('*', (req, res, next) => next(
+  new NotFoundError('Ресурс не найден'),
+));
+
+app.use(handleErrors);
 
 app.listen(PORT, () => {
   // Если работает
