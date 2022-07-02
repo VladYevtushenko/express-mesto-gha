@@ -52,10 +52,11 @@ app.use(auth);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
-app.use(errors());
 app.use('*', (req, res, next) => next(
   new NotFoundError('Ресурс не найден'),
 ));
+
+app.use(errors());
 
 app.use(handleErrors);
 
