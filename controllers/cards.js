@@ -1,8 +1,8 @@
 const Card = require('../models/card');
 
-const BadRequestError = ('../errors/badRequestError.js');
-const NotFoundError = ('../errors/notFoundError.js');
-const ForbiddenError = ('../errors/unauthorisedError.js');
+const BadRequestError = require('../errors/badRequestError');
+const NotFoundError = require('../errors/notFoundError');
+const ForbiddenError = require('../errors/unauthorisedError');
 
 const { inputsError } = require('../utils/inputsError');
 
