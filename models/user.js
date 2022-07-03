@@ -1,8 +1,22 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+// const UnauthorisedError = require('../errors/unauthorisedError');
+const { urlValidation } = require('../utils/urlValidation');
 
 const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: validator.isEmail,
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 8,
+    select: false,
+  },
   name: {
     type: String,
     required: true,
@@ -21,17 +35,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: validator.isEmail,
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 8,
+    validate: urlValidation,
   },
 });
 
