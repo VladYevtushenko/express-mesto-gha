@@ -25,6 +25,7 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Неверно указаны данные в полях: ${inputsError(err)}`));
+        return;
       }
       next(err);
     });
@@ -70,6 +71,7 @@ module.exports.likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка'));
+        return;
       }
       next(err);
     });
@@ -93,6 +95,7 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для снятии лайка'));
+        return;
       }
       next(err);
     });
