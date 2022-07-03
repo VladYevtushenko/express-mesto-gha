@@ -5,7 +5,6 @@ const User = require('../models/user');
 const BadRequestError = require('../errors/badRequestError');
 const ConflictError = require('../errors/conflictError');
 const NotFoundError = require('../errors/notFoundError');
-const UnauthorisedError = require('../errors/unauthorisedError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -63,7 +62,7 @@ module.exports.login = (req, res, next) => {
         .status(200)
         .send({ message: 'Вы вошли' });
     })
-    .catch(() => next(new UnauthorisedError('Указаны неправильные почта или пароль')));
+    .catch(next);
 };
 
 // GET lookup user
@@ -126,6 +125,7 @@ module.exports.editUserInfo = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные при изменении данных пользователя, неверно указаны данные в полях: ${inputsError(err)}`));
+        return;
       }
       next(err);
     });
@@ -150,6 +150,7 @@ module.exports.editUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные при изменении данных пользователя, неверно указаны данные в полях: ${inputsError(err)}`));
+        return;
       }
       next(err);
     });
