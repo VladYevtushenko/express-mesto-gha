@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
 const handleErrors = require('./middlewares/handleErrors');
 const userRouter = require('./routes/users');
@@ -21,6 +22,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(requestLogger);
 
 app.post(
   '/signin',
@@ -55,6 +57,8 @@ app.use('/cards', cardRouter);
 app.use('*', (req, res, next) => next(
   new NotFoundError('Ресурс не найден'),
 ));
+
+app.use(errorLogger);
 
 app.use(errors());
 
