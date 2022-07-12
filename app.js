@@ -3,8 +3,9 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
-const { login, createUser } = require('./controllers/users');
+const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const handleErrors = require('./middlewares/handleErrors');
 const userRouter = require('./routes/users');
@@ -19,6 +20,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+app.use(cors);
 
 app.use(cookieParser());
 app.use(express.json());
