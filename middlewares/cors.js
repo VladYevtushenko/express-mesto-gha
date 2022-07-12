@@ -1,6 +1,6 @@
 const allowedCors = [
   'https://mesto.by.vlad.nomorepartiesxyz.ru',
-  'http://mesto.by.vlad.nomorepartiesxyz.ru/',
+  'http://mesto.by.vlad.nomorepartiesxyz.ru',
   'localhost:3000',
   'http://localhost:3000',
 ];
@@ -8,7 +8,7 @@ const allowedCors = [
 module.exports = ((req, res, next) => {
   const { origin } = req.headers;
   const { method } = req;
-  const DEFAULT_ALLOWED_METHODS = 'GET,PUT,PATCH,POST,DELETE,HEAD';
+  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
   const requestHeaders = req.headers['access-control-request-headers'];
 
   if (allowedCors.includes(origin)) {
