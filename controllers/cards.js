@@ -10,7 +10,7 @@ const { inputsError } = require('../utils/inputsError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
-    .populate('owner')
+    // .populate('owner')
     .then((card) => res.send(card))
     .catch(next);
 };
