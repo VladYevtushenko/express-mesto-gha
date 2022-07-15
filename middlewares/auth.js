@@ -1,26 +1,21 @@
-// const jwt = require('jsonwebtoken');
-// const UnauthorisedError = require('../errors/unauthorisedError');
+const jwt = require('jsonwebtoken');
+const UnauthorisedError = require('../errors/unauthorisedError');
 
-// const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports = (req, res, next) => {
-  // const token = req.cookies.jwt || res.token;
-  res
-    .status(200)
-    .send({ req, res });
-  // if (!token) {
-  //   next(new UnauthorisedError('Ошибка авторизации 321'));
-  //   return;
-  // }
-  // let payload;
-  // try {
-  //   payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key');
-  // } catch (error) {
-  //   next(new UnauthorisedError('Ошибка авторизации 123'));
-  //   return;
-  // }
-  // req.user = payload;
-  if (true === false) {
-    next();
+  const token = req.cookies.jwt || req.query.token;
+  if (!token) {
+    next(new UnauthorisedError('Ошибка авторизации: Не передан токен'));
+    return;
   }
+  let payload;
+  try {
+    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key');
+  } catch (error) {
+    next(new UnauthorisedError('Ошибка авторизации'));
+    return;
+  }
+  req.user = payload;
+  next();
 };
