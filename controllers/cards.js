@@ -41,7 +41,7 @@ module.exports.deleteCard = (req, res, next) => {
         throw new ForbiddenError('Нельзя удалить чужую карточку');
       }
       Card.findByIdAndRemove(req.params.cardId)
-        .then((deletedCard) => res.send(deletedCard))
+        .then((cardDelete) => res.send(cardDelete))
         .catch(next);
     })
     .catch((err) => {
@@ -61,7 +61,7 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .populate('owner')
+    // .populate('owner')
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Передан несуществующий id карточки.');
@@ -85,7 +85,7 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .populate('owner')
+    // .populate('owner')
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Передан несуществующий id карточки.');
