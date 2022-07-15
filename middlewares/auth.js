@@ -4,7 +4,7 @@ const UnauthorisedError = require('../errors/unauthorisedError');
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports = (req, res, next) => {
-  const token = req.cookies.jwt;
+  const token = req.cookies.jwt || res.token;
   if (!token) {
     next(new UnauthorisedError('Ошибка авторизации 321'));
     return;
