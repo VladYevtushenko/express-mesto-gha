@@ -1,9 +1,4 @@
-const allowedCors = [
-  'https://mesto.by.vlad.nomorepartiesxyz.ru',
-  'http://mesto.by.vlad.nomorepartiesxyz.ru',
-  'localhost:3000',
-  'http://localhost:3000',
-];
+const { allowedCors } = require('../utils/consts');
 
 module.exports = ((req, res, next) => {
   const { origin } = req.headers;
